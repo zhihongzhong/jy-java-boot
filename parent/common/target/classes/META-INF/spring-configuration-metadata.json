@@ -2,56 +2,56 @@
   "groups": [
     {
       "name": "jy.jwt",
-      "type": "com.example.config.jwt.JwtConfigProperty",
-      "sourceType": "com.example.config.jwt.JwtConfigProperty"
+      "type": "com.example.common.config.jwt.JwtConfigProperty",
+      "sourceType": "com.example.common.config.jwt.JwtConfigProperty"
     },
     {
       "name": "jy.redis",
-      "type": "com.example.config.redis.CacheConfigProperty",
-      "sourceType": "com.example.config.redis.CacheConfigProperty"
+      "type": "com.example.common.config.redis.CacheConfigProperty",
+      "sourceType": "com.example.common.config.redis.CacheConfigProperty"
     }
   ],
   "properties": [
     {
       "name": "jy.jwt.bearer",
       "type": "java.lang.String",
-      "sourceType": "com.example.config.jwt.JwtConfigProperty",
+      "sourceType": "com.example.common.config.jwt.JwtConfigProperty",
       "defaultValue": "bearer "
     },
     {
       "name": "jy.jwt.expiration",
       "type": "java.lang.Long",
-      "sourceType": "com.example.config.jwt.JwtConfigProperty",
+      "sourceType": "com.example.common.config.jwt.JwtConfigProperty",
       "defaultValue": 0
     },
     {
       "name": "jy.jwt.secret-key",
       "type": "java.lang.String",
-      "sourceType": "com.example.config.jwt.JwtConfigProperty",
+      "sourceType": "com.example.common.config.jwt.JwtConfigProperty",
       "defaultValue": "hello_world"
     },
     {
       "name": "jy.redis.cache-expiration",
       "type": "java.util.Map<java.lang.String,java.lang.Long>",
       "description": "保存自定义缓存的Ttl  Key: cacheName  value: Ttl",
-      "sourceType": "com.example.config.redis.CacheConfigProperty"
+      "sourceType": "com.example.common.config.redis.CacheConfigProperty"
     },
     {
       "name": "jy.redis.port",
       "type": "java.lang.Integer",
-      "sourceType": "com.example.config.redis.CacheConfigProperty",
+      "sourceType": "com.example.common.config.redis.CacheConfigProperty",
       "defaultValue": 6379
     },
     {
       "name": "jy.redis.server-name",
       "type": "java.lang.String",
-      "sourceType": "com.example.config.redis.CacheConfigProperty",
+      "sourceType": "com.example.common.config.redis.CacheConfigProperty",
       "defaultValue": "127.0.0.1"
     },
     {
       "name": "jy.redis.time-to-live",
       "type": "java.lang.Long",
-      "sourceType": "com.example.config.redis.CacheConfigProperty",
+      "sourceType": "com.example.common.config.redis.CacheConfigProperty",
       "defaultValue": 5
     }
   ],

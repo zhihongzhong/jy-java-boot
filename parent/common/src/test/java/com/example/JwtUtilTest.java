@@ -1,8 +1,7 @@
 package com.example;
 
 
-import com.example.config.jwt.JwtProvider;
-import com.example.utils.RedisUtil;
+import com.example.common.config.jwt.JwtProvider;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
