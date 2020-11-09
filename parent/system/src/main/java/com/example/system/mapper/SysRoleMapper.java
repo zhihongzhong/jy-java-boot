@@ -24,4 +24,6 @@ public interface SysRoleMapper {
     int insertSelective(SysRole record);
 
     SysRole selectByPrimaryKey(String id);
+
+    SysRole selectByRoleCode(String roleName);
 }

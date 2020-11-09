@@ -1,7 +1,6 @@
 package com.example.system.vo;
 
 import com.example.system.entity.SysUser;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AllArgsConstructor;
 import lombok.Data;

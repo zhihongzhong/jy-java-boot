@@ -4,17 +4,17 @@ import cn.hutool.core.util.RandomUtil;
 import com.example.common.config.jwt.JwtProvider;
 import com.example.common.utils.RandomImageUtil;
 import com.example.common.utils.RedisUtil;
-
 import com.example.constant.RESPONSE_STATUS;
+import com.example.constant.USER_AND_ROLE;
 import com.example.dto.SysUserModel;
-import com.example.exception.CaptchaException;
-import com.example.exception.IncorrectPasswordException;
-import com.example.exception.UserNotFoundException;
+import com.example.dto.SysUserRegisterModel;
+import com.example.exception.*;
 import com.example.system.entity.SysUser;
 import com.example.system.service.ISysUserService;
 import com.example.system.vo.CaptchaVo;
 import com.example.system.vo.SysUserProfileVo;
 import com.example.util.ResultJSON;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,6 +45,17 @@ public class SysLoginController {
     this.jwtProvider = jwtProvider;
   }
 
+  private Boolean checkCaptcha(String captcha, String captchaKey) throws CaptchaException {
+    if(captcha == null || captchaKey == null) {
+      throw new CaptchaException();
+    }
+
+
+    final String cachedCaptcha = (String) redisUtil.get(captchaKey);
+    log.info("取出缓存：[{}]", cachedCaptcha);
+
+    return cachedCaptcha != null && cachedCaptcha.equals(captcha);
+  }
   /**
    *
    * 生成验证码，
@@ -70,7 +81,7 @@ public class SysLoginController {
    * */
   @PostMapping(value = "login")
   public ResultJSON<SysUserProfileVo> login(@RequestBody SysUserModel userModel)
-    throws UserNotFoundException, IncorrectPasswordException, CaptchaException {
+    throws UserNotFoundException, IncorrectPasswordException, CaptchaException, IncorrectCaptchaException {
 
     final String username = userModel.getUsername();
     final String password = userModel.getPassword();
@@ -79,17 +90,11 @@ public class SysLoginController {
     final String captcha = userModel.getCaptcha();
 
     log.info("收到 userModel ： [{}]", userModel.toString());
-    if(captcha == null || captchaKey == null) {
-      throw new CaptchaException();
+
+    if(!checkCaptcha(captcha, captchaKey)) {
+      throw new IncorrectCaptchaException();
     }
 
-
-    final String cachedCaptcha = (String) redisUtil.get(captchaKey);
-    log.info("取出缓存：[{}]", cachedCaptcha);
-
-    if(cachedCaptcha == null || !cachedCaptcha.equals(captcha)) {
-      throw new CaptchaException();
-    }
 
     /* 消费验证码 */
     redisUtil.delete(captchaKey);
@@ -107,6 +112,48 @@ public class SysLoginController {
     String token = jwtProvider.genToken(username);
     SysUserProfileVo userProfileVo = new SysUserProfileVo(sysUser, token);
     log.info("获取 token: [{}]", token);
+    return ResultJSON.<SysUserProfileVo>success().addData(userProfileVo);
+  }
+
+
+  /**
+   * 用户注册模块
+   * */
+  @ApiOperation(
+    value = "用户注册",
+    httpMethod = "post",
+    response = SysUserProfileVo.class
+  )
+  @PostMapping("register")
+  public ResultJSON<SysUserProfileVo> register(@RequestBody SysUserRegisterModel userRegisterModel)
+    throws UserAlreadyExistedException, CaptchaException, IncorrectCaptchaException, PasswordDiscrepancyException {
+
+    final String username = userRegisterModel.getUsername();
+    final String captcha = userRegisterModel.getCaptcha();
+    final String captchaKey = userRegisterModel.getCaptchaKey();
+
+    final String password = userRegisterModel.getPassword();
+    final String confirmPassword = userRegisterModel.getConfirmPassword();
+
+    final String nickname = userRegisterModel.getNickname();
+
+    if(!checkCaptcha(captcha, captchaKey)) {
+      throw new IncorrectCaptchaException();
+    }
+
+    if(!password.equals(confirmPassword)) {
+      throw new PasswordDiscrepancyException();
+    }
+
+    if(userService.selectSysByUsername(username) != null) {
+      throw new UserAlreadyExistedException();
+    }
+
+    SysUser user = userService.insertUserWithRole(USER_AND_ROLE.DEFAULT_USER_PROFILE, username, password, nickname);
+    String token = jwtProvider.genToken(username);
+
+    SysUserProfileVo userProfileVo = new SysUserProfileVo(user, token);
+
     return ResultJSON.<SysUserProfileVo>success().addData(userProfileVo);
   }
 
@@ -138,5 +185,20 @@ public class SysLoginController {
   @ExceptionHandler(CaptchaException.class)
   public ResultJSON<String> handleCaptchaException() {
     return ResultJSON.fail(RESPONSE_STATUS.EMPTY_CAPTCHA);
+  }
+
+  @ExceptionHandler(UserAlreadyExistedException.class)
+  public ResultJSON<String> handleUserAlreadyExistedException() {
+    return ResultJSON.fail(RESPONSE_STATUS.USER_ALREADY_EXISTED_EXCEPTION);
+  }
+
+  @ExceptionHandler(IncorrectCaptchaException.class)
+  public ResultJSON<String> handleIncorrectCaptchaException() {
+    return ResultJSON.fail(RESPONSE_STATUS.INCORRECT_CAPTCHA);
+  }
+
+  @ExceptionHandler(PasswordDiscrepancyException.class)
+  public ResultJSON<String> handlePasswordDiscrepancyException() {
+    return ResultJSON.fail(RESPONSE_STATUS.PASSWORD_DISCREPANCY_EXCEPTION);
   }
 }

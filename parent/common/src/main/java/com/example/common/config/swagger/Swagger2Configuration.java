@@ -1,7 +1,6 @@
 package com.example.common.config.swagger;
 
 import com.example.common.config.jwt.JwtConfigProperty;
-import com.github.xiaoymin.swaggerbootstrapui.annotations.EnableSwaggerBootstrapUI;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,14 +13,11 @@ import springfox.documentation.service.Contact;
 import springfox.documentation.service.SecurityScheme;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 @Configuration
-@EnableSwagger2
-@EnableSwaggerBootstrapUI
 @EnableConfigurationProperties(JwtConfigProperty.class)
 public class Swagger2Configuration {
 

@@ -3,9 +3,10 @@ package com.example;
 import com.example.common.utils.RandomImageUtil;
 import org.junit.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+
 import java.io.IOException;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 @SpringBootTest
 public class RandomImageUtilTest {
 

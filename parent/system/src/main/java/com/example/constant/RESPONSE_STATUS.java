@@ -17,6 +17,13 @@ public enum RESPONSE_STATUS {
   /* 验证码不正确 */
   INCORRECT_CAPTCHA(404, "验证码不正确"),
 
+  /* 用户已存在 */
+  USER_ALREADY_EXISTED_EXCEPTION(405, "用户已存在"),
+
+  /* 密码不一致 */
+  PASSWORD_DISCREPANCY_EXCEPTION(406, "密码不一致"),
+
+
   /* IO 异常时候返回 */
   IO_EXCEPTION(500, "IO异常"),
 

@@ -2,8 +2,8 @@ package com.example.system.security.config;
 
 import com.example.common.config.jwt.JwtProvider;
 import com.example.system.security.filter.JwtAuthenticationFilter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -17,6 +17,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   private final JwtProvider jwtProvider;
   private final String UNLIMITED_URI = "/sys/**";
   private final String LOGIN_URI = "/sys/login";
+
+  private final String[] IGNORED_URIs = {"/v2/api-docs/**", "/doc.html", "/webjars/**"};
 
   public SecurityConfig(JwtProvider jwtProvider) {
     this.jwtProvider = jwtProvider;
@@ -44,5 +46,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     return new JwtAuthenticationFilter(requestMatcher, this.jwtProvider);
   }
 
+
+  @Override
+  public void configure(WebSecurity webSecurity) {
+    webSecurity.ignoring().antMatchers(IGNORED_URIs);
+  }
 
 }

@@ -63,10 +63,10 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.String">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into sys_user (username, nickname, password, 
+    insert into sys_user (id, username, nickname, password,
       avatar, birth, phone, 
       created_at, update_at)
-    values (#{username,jdbcType=VARCHAR}, #{nickname,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+    values (#{id, jdbcType=VARCHAR},#{username,jdbcType=VARCHAR}, #{nickname,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
       #{avatar,jdbcType=VARCHAR}, #{birth,jdbcType=TIMESTAMP}, #{phone,jdbcType=VARCHAR}, 
       #{created_at,jdbcType=TIMESTAMP}, #{update_at,jdbcType=TIMESTAMP})
   </insert>

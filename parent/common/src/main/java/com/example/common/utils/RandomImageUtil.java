@@ -1,13 +1,12 @@
 package com.example.common.utils;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.Random;
-import javax.imageio.ImageIO;
-import java.io.ByteArrayOutputStream;
 
 /**
  * 生成图片验证码

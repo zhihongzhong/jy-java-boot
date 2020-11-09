@@ -1,6 +1,5 @@
 package com.example.system.mapper;
 
-import com.example.system.entity.SysRole;
 import com.example.system.entity.SysUserRole;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;

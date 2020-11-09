@@ -3,7 +3,8 @@ package com.example;
 import com.example.common.utils.MD5Util;
 import org.junit.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertEquals;
 
 @SpringBootTest
 public class MD5UtilTest {

@@ -88,4 +88,10 @@
       role_name, role_code, description,
       create_by, created_at, update_at from sys_role where id = #{id, jdbcType=VARCHAR};
   </select>
+  
+  <select id="selectByRoleCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+      role_name, role_code, description,
+      create_by, created_at, update_at from sys_role where role_code = #{roleName, jdbcType=VARCHAR};
+  </select>
 </mapper>
