@@ -87,4 +87,18 @@ public class JwtProvider {
       .setExpiration(expirationTime)
       .compact();
   }
+
+  public Object getClaim(String token, String claimName) {
+    try {
+      return Jwts
+        .parser()
+        .setSigningKey(secretKey.getBytes())
+        .parseClaimsJws(token)
+        .getBody()
+        .get(claimName);
+    }catch (Exception e) {
+      return Boolean.FALSE;
+    }
+
+  }
 }

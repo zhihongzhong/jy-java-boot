@@ -1,0 +1,34 @@
+{
+  "groups": [
+    {
+      "name": "jy.file",
+      "type": "com.example.system.config.file.config.FileConfigProperties",
+      "sourceType": "com.example.system.config.file.config.FileConfigProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "jy.file.basic-url",
+      "type": "java.lang.String",
+      "sourceType": "com.example.system.config.file.config.FileConfigProperties",
+      "defaultValue": "\/file\/"
+    },
+    {
+      "name": "jy.file.file-types",
+      "type": "java.lang.String[]",
+      "sourceType": "com.example.system.config.file.config.FileConfigProperties",
+      "defaultValue": [
+        "IMAGE",
+        "VOICE",
+        "VIDEO"
+      ]
+    },
+    {
+      "name": "jy.file.root-location",
+      "type": "java.lang.String",
+      "sourceType": "com.example.system.config.file.config.FileConfigProperties",
+      "defaultValue": "files"
+    }
+  ],
+  "hints": []
+}

@@ -19,8 +19,10 @@ public class JwtConfigProperty {
 
   private long expiration = 24 * 60 * 60 * 1000; // 毫秒为单位
 
-  private String bearer = "bearer "; // 认证消息头
+  private String bearer = "token"; // 认证消息头
 
   private String secretKey = "hello_world";
 
+  /* 密码字段 */
+  private String passwordField = "pass";
 }

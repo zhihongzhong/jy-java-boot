@@ -1,24 +1,28 @@
 package com.example.system.controller;
 
 import cn.hutool.core.util.RandomUtil;
+import com.example.common.config.jwt.JwtConfigProperty;
 import com.example.common.config.jwt.JwtProvider;
 import com.example.common.utils.RandomImageUtil;
 import com.example.common.utils.RedisUtil;
-import com.example.constant.RESPONSE_STATUS;
+import com.example.common.constant.RESPONSE_STATUS;
 import com.example.constant.USER_AND_ROLE;
-import com.example.dto.SysUserModel;
-import com.example.dto.SysUserRegisterModel;
-import com.example.exception.*;
+import com.example.system.dto.SysUserModel;
+import com.example.system.dto.SysUserRegisterModel;
+import com.example.system.exception.*;
 import com.example.system.entity.SysUser;
 import com.example.system.service.ISysUserService;
 import com.example.system.vo.CaptchaVo;
 import com.example.system.vo.SysUserProfileVo;
-import com.example.util.ResultJSON;
+import com.example.common.utils.ResultJSON;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -27,7 +31,7 @@ import java.io.IOException;
  * @since 2020.11.06
  * */
 @RestController
-@RequestMapping("/sys")
+@RequestMapping("/sys/auth")
 @Log4j2
 public class SysLoginController {
 
@@ -39,10 +43,13 @@ public class SysLoginController {
   /* 验证码有效时间 */
   private static final int DEFAULT_CAPTCHA_TIME = 60 * 5;
 
-  public SysLoginController(RedisUtil redisUtil, ISysUserService userService, JwtProvider jwtProvider) {
+  private final String passwordField;
+
+  public SysLoginController(RedisUtil redisUtil, ISysUserService userService, JwtProvider jwtProvider, JwtConfigProperty property) {
     this.redisUtil = redisUtil;
     this.userService = userService;
     this.jwtProvider = jwtProvider;
+    this.passwordField = property.getPasswordField();
   }
 
   private Boolean checkCaptcha(String captcha, String captchaKey) throws CaptchaException {
@@ -81,7 +88,7 @@ public class SysLoginController {
    * */
   @PostMapping(value = "login")
   public ResultJSON<SysUserProfileVo> login(@RequestBody SysUserModel userModel)
-    throws UserNotFoundException, IncorrectPasswordException, CaptchaException, IncorrectCaptchaException {
+    throws UsernameNotFoundException, IncorrectPasswordException, CaptchaException, IncorrectCaptchaException {
 
     final String username = userModel.getUsername();
     final String password = userModel.getPassword();
@@ -101,7 +108,7 @@ public class SysLoginController {
     SysUser sysUser = userService.selectSysByUsername(username);
 
     if(sysUser == null) {
-      throw new UserNotFoundException();
+      throw new UsernameNotFoundException("用户名未找到");
     }
 
     if(!sysUser.getPassword().equals(password)) {
@@ -121,7 +128,6 @@ public class SysLoginController {
    * */
   @ApiOperation(
     value = "用户注册",
-    httpMethod = "post",
     response = SysUserProfileVo.class
   )
   @PostMapping("register")
@@ -150,8 +156,10 @@ public class SysLoginController {
     }
 
     SysUser user = userService.insertUserWithRole(USER_AND_ROLE.DEFAULT_USER_PROFILE, username, password, nickname);
-    String token = jwtProvider.genToken(username);
+    Map<String, String> claims = new HashMap<>();
 
+    claims.put(passwordField, password);
+    String token = jwtProvider.genToken(username, claims);
     SysUserProfileVo userProfileVo = new SysUserProfileVo(user, token);
 
     return ResultJSON.<SysUserProfileVo>success().addData(userProfileVo);
@@ -169,7 +177,7 @@ public class SysLoginController {
   /**
    * 处理用户未找到异常
    * */
-  @ExceptionHandler(UserNotFoundException.class)
+  @ExceptionHandler(UsernameNotFoundException.class)
   public ResultJSON<String> handleUserNotFoundException() {
     return ResultJSON.fail(RESPONSE_STATUS.USER_NOT_FOUND_EXCEPTION);
   }
@@ -182,21 +190,33 @@ public class SysLoginController {
     return ResultJSON.fail(RESPONSE_STATUS.INCORRECT_PASSWORD_EXCEPTION);
   }
 
+  /**
+   * 处理验证码为空
+   * */
   @ExceptionHandler(CaptchaException.class)
   public ResultJSON<String> handleCaptchaException() {
     return ResultJSON.fail(RESPONSE_STATUS.EMPTY_CAPTCHA);
   }
 
+  /**
+   * 处理用户已经存在
+   * */
   @ExceptionHandler(UserAlreadyExistedException.class)
   public ResultJSON<String> handleUserAlreadyExistedException() {
     return ResultJSON.fail(RESPONSE_STATUS.USER_ALREADY_EXISTED_EXCEPTION);
   }
 
+  /**
+   * 处理验证码错误
+   * */
   @ExceptionHandler(IncorrectCaptchaException.class)
   public ResultJSON<String> handleIncorrectCaptchaException() {
     return ResultJSON.fail(RESPONSE_STATUS.INCORRECT_CAPTCHA);
   }
 
+  /**
+   * 处理输入密码不一致
+   * */
   @ExceptionHandler(PasswordDiscrepancyException.class)
   public ResultJSON<String> handlePasswordDiscrepancyException() {
     return ResultJSON.fail(RESPONSE_STATUS.PASSWORD_DISCREPANCY_EXCEPTION);

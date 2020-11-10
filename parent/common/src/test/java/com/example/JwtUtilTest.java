@@ -43,5 +43,9 @@ public class JwtUtilTest {
     token  = provider.genToken(userName, extraAttrs);
     decodedUsername = provider.getSubject(token);
     assertEquals(userName, decodedUsername);
+
+
+    String pass = (String) provider.getClaim(token, "password");
+    assertEquals(pass, "Qin");
   }
 }

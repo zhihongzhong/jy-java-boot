@@ -69,9 +69,13 @@
         <configuration>
           <configurationFile>src/main/resources/generator-config.xml</configurationFile>
           <overwrite>false</overwrite>
-          <verbose>true</verbose>
+          <verbose>false</verbose>
           <skip>false</skip>
+          
+          <!-- 可以代替 dependencies-->
+          <!--<includeCompileDependencies>true</includeCompileDependencies>-->
         </configuration>
+        
         
         <!-- 非常重要 -->
         <dependencies>
@@ -81,6 +85,7 @@
             <version>8.0.21</version>
           </dependency>
         </dependencies>
+        
       </plugin>
     </plugins>
   </build>

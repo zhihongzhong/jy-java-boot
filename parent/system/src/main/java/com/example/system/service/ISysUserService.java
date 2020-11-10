@@ -1,9 +1,11 @@
 package com.example.system.service;
 
 import com.example.constant.USER_AND_ROLE;
-import com.example.exception.UserNotFoundException;
 import com.example.system.entity.SysRole;
 import com.example.system.entity.SysUser;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+import java.util.List;
 
 /**
  * 用户接口
@@ -20,8 +22,8 @@ public interface ISysUserService {
   /**
    * 查询用户角色
    * */
-  SysRole selectSysRoleByUsername(String username)
-    throws UserNotFoundException;
+  List<SysRole> selectSysRolesByUsername(String username)
+    throws UsernameNotFoundException;
 
   /**
    * 新建用户及权限

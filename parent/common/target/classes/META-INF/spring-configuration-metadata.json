@@ -16,13 +16,19 @@
       "name": "jy.jwt.bearer",
       "type": "java.lang.String",
       "sourceType": "com.example.common.config.jwt.JwtConfigProperty",
-      "defaultValue": "bearer "
+      "defaultValue": "token"
     },
     {
       "name": "jy.jwt.expiration",
       "type": "java.lang.Long",
       "sourceType": "com.example.common.config.jwt.JwtConfigProperty",
       "defaultValue": 0
+    },
+    {
+      "name": "jy.jwt.password-field",
+      "type": "java.lang.String",
+      "sourceType": "com.example.common.config.jwt.JwtConfigProperty",
+      "defaultValue": "pass"
     },
     {
       "name": "jy.jwt.secret-key",

@@ -13,14 +13,14 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="common" target="8" />
-      <module name="parent" target="11" />
-      <module name="system" target="1.7" />
+      <module name="parent" target="8" />
+      <module name="system" target="8" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="common" options="-parameters" />
-      <module name="parent" options="-parameters" />
+      <module name="parent" options="" />
       <module name="system" options="-parameters" />
     </option>
   </component>
