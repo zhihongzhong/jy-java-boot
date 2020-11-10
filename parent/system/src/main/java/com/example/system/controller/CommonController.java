@@ -8,6 +8,7 @@ import com.example.config.file.IStorageService;
 import com.example.config.file.dto.FileInformationDto;
 import com.example.config.file.exception.FileTypeNotSupportException;
 import com.example.system.dto.FileDescriptionModel;
+import io.swagger.annotations.Api;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,9 @@ import java.io.IOException;
 @Log4j2
 @RestController
 @RequestMapping("/sys/common")
+@Api(
+  tags = "通用控制器"
+)
 public class CommonController {
 
   @Autowired

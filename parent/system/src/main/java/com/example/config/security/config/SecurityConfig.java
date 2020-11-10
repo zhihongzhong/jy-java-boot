@@ -28,6 +28,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   /* 用于 WEB_SECURITY 忽略， WEB_SECURITY 优先级高于 HTTP_SECURITY  */
   private final String[] IGNORED_URIs = {"/v2/api-docs/**", "/doc.html", "/webjars/**", "/swagger-resources/**", "/error/**", "/swagger-ui.html"};
 
+  /* admin 的 HTTP_SECURITY URL */
+  private final String ADMIN_URL = "/sys/admin";
+
   private final JwtConfigProperty jwtConfigProperty;
 
   /* 用于给系统自带的 authenticationManager 调用 */
@@ -51,6 +54,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       .authorizeRequests()
       .antMatchers(UNLIMITED_URI)
       .permitAll()
+      .antMatchers(ADMIN_URL)
+      .hasRole("admin")
       .anyRequest()
       .authenticated();
   }

@@ -15,6 +15,7 @@ import com.example.system.service.ISysUserService;
 import com.example.system.vo.CaptchaVo;
 import com.example.system.vo.SysUserProfileVo;
 import com.example.common.utils.ResultJSON;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -33,6 +34,9 @@ import java.util.Map;
 @RestController
 @RequestMapping("/sys/auth")
 @Log4j2
+@Api(
+  tags = "用户接口"
+)
 public class SysLoginController {
 
   private final RedisUtil redisUtil;

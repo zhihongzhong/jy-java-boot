@@ -108,8 +108,8 @@
       <generatedKey column="ID" sqlStatement="MySql" identity="true" />
     </table>
   
-    <table tableName="SysSubject"
-           domainObjectName="LocalFile"
+    <table tableName="sys_subject"
+           domainObjectName="SysSubject"
            enableDeleteByExample="false"
            enableCountByExample="false"
            enableUpdateByExample="false"
@@ -132,6 +132,18 @@
       <generatedKey column="ID" sqlStatement="MySql" identity="true" />
     </table>
   
+    <table tableName="sys_questionnaire_subject"
+           domainObjectName="SysQuestionnaireSubject"
+           enableDeleteByExample="false"
+           enableCountByExample="false"
+           enableUpdateByExample="false"
+           enableSelectByExample="false"
+           selectByExampleQueryId="false"
+    >
+      <property name="useActualColumnNames" value="false"/>
+      <generatedKey column="ID" sqlStatement="MySql" identity="true" />
+    </table>
+    
     <table tableName="sys_questionnaire_answer"
            domainObjectName="SysQuestionnaireAnswer"
            enableDeleteByExample="false"
