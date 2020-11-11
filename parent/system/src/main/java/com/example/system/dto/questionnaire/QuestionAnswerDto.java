@@ -1,4 +1,4 @@
-package com.example.system.dto;
+package com.example.system.dto.questionnaire;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.ToString;
 import reactor.util.annotation.Nullable;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -24,7 +25,7 @@ public class QuestionAnswerDto {
   )
   private String questionnaireId;
 
-  @NotNull
+  @Valid
   @ApiModelProperty(
     value = "回答列表",
     allowEmptyValue = false
@@ -34,25 +35,27 @@ public class QuestionAnswerDto {
 
   @Data
   @ToString
-  private static class Answer {
+  public static class Answer {
 
+    @NotNull
     @ApiModelProperty(
       value = "题目ID",
       allowEmptyValue = false
     )
     private String subjectId;
 
+    @NotNull
     @ApiModelProperty(
       value = "选项ID",
       allowEmptyValue = false
     )
-    private String optionId;
+    private List<String> optionId;
 
     @Nullable
     @ApiModelProperty(
       value = "额外值",
       allowEmptyValue = true
     )
-    private String value;
+    private String value = "";
   }
 }

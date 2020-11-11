@@ -40,6 +40,7 @@ public class ResultJSON<T> {
 
     ResultJSON<T> _this = new ResultJSON<>();
     _this.code = status.getValue();
+    _this.msg = status.getDescription();
     _this.errorMsg = status.getDescription();
     _this.data = null;
 

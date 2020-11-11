@@ -60,4 +60,6 @@ public interface SysSubjectMapper {
      * 根据ID列表查出 SysSubject
      * */
     List<SysSubject> selectByPrimaryKeys(List<String> ids);
+
+    List<SysSubject> selectAll();
 }

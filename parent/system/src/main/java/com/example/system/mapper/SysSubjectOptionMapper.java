@@ -57,5 +57,5 @@ public interface SysSubjectOptionMapper {
      */
     int updateByPrimaryKey(SysSubjectOption record);
 
-  List<SysSubjectOption> selectBySubjectId(String id);
+    List<SysSubjectOption> selectBySubjectId(String id);
 }

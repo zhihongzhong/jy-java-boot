@@ -3,6 +3,7 @@ package com.example.system.mapper;
 import com.example.system.entity.SysQuestionnaire;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
+import java.util.List;
 
 @Mapper
 @Repository
@@ -54,4 +55,9 @@ public interface SysQuestionnaireMapper {
      * @mbg.generated Tue Nov 10 14:22:23 CST 2020
      */
     int updateByPrimaryKey(SysQuestionnaire record);
+
+    /**
+     * 自定义查询， 选择所有
+     * */
+    List<SysQuestionnaire> selectAll();
 }

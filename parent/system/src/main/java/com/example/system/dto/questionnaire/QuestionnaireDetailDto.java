@@ -8,7 +8,7 @@ import java.util.List;
 @Data
 @ToString
 @AllArgsConstructor
-public class QuestionnaireDto {
+public class QuestionnaireDetailDto {
   private String questionnaireName;
 
   private List<SubjectDto> subjectDtoList;

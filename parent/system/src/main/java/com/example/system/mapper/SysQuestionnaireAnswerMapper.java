@@ -1,8 +1,10 @@
 package com.example.system.mapper;
 
 import com.example.system.entity.SysQuestionnaireAnswer;
+import com.example.system.entity.param.QuestionnaireAnswerParam;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
+import java.util.List;
 
 @Mapper
 @Repository
@@ -22,4 +24,14 @@ public interface SysQuestionnaireAnswerMapper {
      * @mbg.generated Tue Nov 10 14:22:23 CST 2020
      */
     int insertSelective(SysQuestionnaireAnswer record);
+
+    /**
+     * 插入多条数据
+     * */
+    void insertAll(List<SysQuestionnaireAnswer> answerList);
+
+    /**
+     * 查询用户是否已经提交数据
+     * */
+    SysQuestionnaireAnswer selectByQuestionnaireIdAndUserName(QuestionnaireAnswerParam param);
 }

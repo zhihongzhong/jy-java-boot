@@ -30,6 +30,7 @@ public class SysQuestionnaire {
      *
      * @mbg.generated Tue Nov 10 14:22:23 CST 2020
      */
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Byte status;
 
     /**

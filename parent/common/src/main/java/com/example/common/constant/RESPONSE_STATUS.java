@@ -31,6 +31,17 @@ public enum RESPONSE_STATUS {
   /* 文件名不支持 */
   FILE_TYPE_NOT_SUPPORT(600, "文件类型不支持"),
 
+  /* 问卷不存在 */
+  QUESTIONNAIRE_NOT_FOUND(700, "问卷不存在"),
+
+  /* 题目列表不完整 */
+  SUBJECT_NOT_FOUND(701, "题目列表不完整"),
+
+  /* 参数列表有误 */
+  QUESTIONNAIRE_FORMAT_BROKEN(702, "参数列表不完整"),
+
+  /* 选项为空 */
+  QUESTIONNAIRE_EMPTY_OPTION(703, "选项为空"),
   /* 请求正常返回 */
   SUCCESS(0, "操作成功");
 

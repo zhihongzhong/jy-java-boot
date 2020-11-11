@@ -2,22 +2,22 @@ package com.example.system.service.impl;
 
 import com.example.common.utils.UUIDUtil;
 import com.example.constant.QUESTIONNAIRE_AND_SUBJECT;
-import com.example.system.dto.questionnaire.QuestionnaireDto;
+import com.example.system.dto.questionnaire.QuestionAnswerDto;
+import com.example.system.dto.questionnaire.QuestionnaireDetailDto;
 import com.example.system.dto.questionnaire.SubjectDto;
-import com.example.system.entity.SysQuestionnaire;
-import com.example.system.entity.SysQuestionnaireSubject;
-import com.example.system.entity.SysSubject;
-import com.example.system.entity.SysSubjectOption;
+import com.example.system.entity.*;
+import com.example.system.entity.param.QuestionnaireAnswerParam;
 import com.example.system.entity.param.QuestionnaireParam;
 import com.example.system.mapper.*;
 import com.example.system.service.ISysQuestionnaireService;
 import lombok.extern.log4j.Log4j2;
-import org.omg.PortableInterceptor.SUCCESSFUL;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,19 +29,22 @@ public class SysQuestionnaireServiceImpl implements ISysQuestionnaireService {
   private final SysQuestionnaireMapper questionnaireMapper;
   private final SysSubjectOptionMapper optionMapper;
   private final SysQuestionnaireSubjectMapper questionnaireSubjectMapper;
+  private final SysQuestionnaireAnswerMapper questionnaireAnswerMapper;
 
   public SysQuestionnaireServiceImpl(
     SysQuestionnaireAnswerMapper answerMapper,
     SysSubjectMapper subjectMapper,
     SysQuestionnaireMapper questionnaireMapper,
     SysSubjectOptionMapper optionMapper,
-    SysQuestionnaireSubjectMapper questionnaireSubjectMapper) {
+    SysQuestionnaireSubjectMapper questionnaireSubjectMapper,
+    SysQuestionnaireAnswerMapper questionnaireAnswerMapper) {
 
     this.answerMapper = answerMapper;
     this.subjectMapper = subjectMapper;
     this.questionnaireMapper = questionnaireMapper;
     this.optionMapper = optionMapper;
     this.questionnaireSubjectMapper = questionnaireSubjectMapper;
+    this.questionnaireAnswerMapper = questionnaireAnswerMapper;
   }
 
   /**
@@ -93,13 +96,32 @@ public class SysQuestionnaireServiceImpl implements ISysQuestionnaireService {
   }
 
   @Override
+  @Transactional
   public void createSubjectWithOptions(SysQuestionnaireSubject subject, List<SysQuestionnaire> options) {
     String subjectId = subject.getSubjectId();
 
   }
 
   @Override
-  public QuestionnaireDto getQuestionnaireByID(String questionnaireID) {
+  public List<SubjectDto> getSubjectList() {
+
+    List<SubjectDto> subjectDtoList = new ArrayList<>();
+
+    List<SysSubject> subjects = subjectMapper.selectAll();
+
+    for (SysSubject subject : subjects) {
+      SubjectDto subjectDto = new SubjectDto();
+      List<SysSubjectOption> options = optionMapper.selectBySubjectId(subject.getId());
+      subjectDto.setOptions(options);
+      subjectDto.setSysSubject(subject);
+      subjectDtoList.add(subjectDto);
+    }
+
+    return subjectDtoList;
+  }
+
+  @Override
+  public QuestionnaireDetailDto getQuestionnaireByID(String questionnaireID) {
 
     SysQuestionnaire sysQuestionnaire = questionnaireMapper.selectByPrimaryKey(questionnaireID);
 
@@ -127,7 +149,56 @@ public class SysQuestionnaireServiceImpl implements ISysQuestionnaireService {
       subjectDtoList.add(subjectDto);
     }
 
-    return new QuestionnaireDto(sysQuestionnaire.getQuestionnaireName(), subjectDtoList);
+    return new QuestionnaireDetailDto(sysQuestionnaire.getQuestionnaireName(), subjectDtoList);
+  }
+
+  /**
+   * 查询所有问卷
+   * */
+  @Override
+  public List<SysQuestionnaire> getAllQuestionnaires() {
+    return questionnaireMapper.selectAll();
+  }
+
+  /**
+   * 存储问卷内容
+   * */
+  @Override
+  @Transactional
+  public void save(QuestionAnswerDto answerDto, String userName) {
+    String questionnaireId = answerDto.getQuestionnaireId();
+    List<SysQuestionnaireSubject> questionnaireSubjects = questionnaireSubjectMapper.selectByQuestionnaireId(questionnaireId);
+    Map<String,String> hashMap = questionnaireSubjects.stream().collect(Collectors.toMap(SysQuestionnaireSubject::getSubjectId, SysQuestionnaireSubject::getId));
+
+    List<QuestionAnswerDto.Answer> answers = answerDto.getAnswers();
+    List<SysQuestionnaireAnswer> questionnaireAnswers = new ArrayList<>();
+    for (QuestionAnswerDto.Answer answer : answers) {
+      SysQuestionnaireAnswer questionnaireAnswer = new SysQuestionnaireAnswer();
+      questionnaireAnswer.setId(UUIDUtil.uuid());
+
+      questionnaireAnswer.setQuestionnaireSubjectId(hashMap.get(answer.getSubjectId()));
+      questionnaireAnswer.setUserId(userName);
+      questionnaireAnswer.setQuestionaireId(questionnaireId);
+      questionnaireAnswer.setAnswer(String.join(",", answer.getOptionId()));
+      questionnaireAnswer.setCreatedAt(new Date());
+      questionnaireAnswers.add(questionnaireAnswer);
+    }
+
+    questionnaireAnswerMapper.insertAll(questionnaireAnswers);
+  }
+
+  @Override
+  public Boolean isSubmitted(String questionnaireId, String userName) {
+    try {
+      QuestionnaireAnswerParam param = new QuestionnaireAnswerParam(questionnaireId, userName);
+      if(questionnaireAnswerMapper.selectByQuestionnaireIdAndUserName(param) == null) {
+        return false;
+      }
+      return true;
+    }catch (Exception e) {
+      log.info("查询是否提交发生错误，即将退出。 错误信息：[{}]", e.getMessage());
+      return true;
+    }
   }
 
   private Boolean isExists(SysQuestionnaireSubject questionnaireSubject) {
