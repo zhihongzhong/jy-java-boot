@@ -3,18 +3,18 @@ package com.example.system.controller;
 import cn.hutool.core.util.RandomUtil;
 import com.example.common.config.jwt.JwtConfigProperty;
 import com.example.common.config.jwt.JwtProvider;
+import com.example.common.constant.RESPONSE_STATUS;
 import com.example.common.utils.RandomImageUtil;
 import com.example.common.utils.RedisUtil;
-import com.example.common.constant.RESPONSE_STATUS;
+import com.example.common.utils.ResultJSON;
 import com.example.constant.USER_AND_ROLE;
 import com.example.system.dto.SysUserModel;
 import com.example.system.dto.SysUserRegisterModel;
-import com.example.system.exception.*;
 import com.example.system.entity.SysUser;
+import com.example.system.exception.*;
 import com.example.system.service.ISysUserService;
 import com.example.system.vo.CaptchaVo;
 import com.example.system.vo.SysUserProfileVo;
-import com.example.common.utils.ResultJSON;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
@@ -72,6 +72,10 @@ public class SysLoginController {
    * 生成验证码，
    * 有效时间 5 分钟
    * */
+  @ApiOperation(
+    value = "获取验证码",
+    response = CaptchaVo.class
+  )
   @GetMapping(value = "captcha")
   public ResultJSON<CaptchaVo> genCaptcha(@RequestParam("seed")String seed) throws IOException{
     /* 4 位数验证码 */
@@ -90,6 +94,10 @@ public class SysLoginController {
   /**
    * 用户登录
    * */
+  @ApiOperation(
+    value = "用户登录",
+    response = SysUserProfileVo.class
+  )
   @PostMapping(value = "login")
   public ResultJSON<SysUserProfileVo> login(@RequestBody SysUserModel userModel)
     throws UsernameNotFoundException, IncorrectPasswordException, CaptchaException, IncorrectCaptchaException {

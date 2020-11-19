@@ -58,4 +58,9 @@ public interface SysSubjectOptionMapper {
     int updateByPrimaryKey(SysSubjectOption record);
 
     List<SysSubjectOption> selectBySubjectId(String id);
+
+    /**
+     * 批量插入
+     * */
+    void insertAll(List<SysSubjectOption> options);
 }

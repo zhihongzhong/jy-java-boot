@@ -3,27 +3,21 @@ package com.example.system.controller;
 import com.example.common.constant.RESPONSE_STATUS;
 import com.example.common.utils.ResultJSON;
 import com.example.constant.QUESTIONNAIRE_AND_SUBJECT;
-import com.example.system.dto.questionnaire.QuestionAnswerDto;
-import com.example.system.dto.questionnaire.QuestionnaireDetailDto;
-import com.example.system.dto.questionnaire.SubjectDto;
+import com.example.system.dto.questionnaire.*;
 import com.example.system.entity.SysQuestionnaire;
 import com.example.system.entity.SysSubjectOption;
-import com.example.system.exception.questionnaire.OptionNotFoundException;
-import com.example.system.exception.questionnaire.QuestionnaireBrokenFormatException;
-import com.example.system.exception.questionnaire.QuestionnaireNotFoundException;
-import com.example.system.exception.questionnaire.SubjectNotFoundException;
+import com.example.system.exception.ApiException;
+import com.example.system.exception.questionnaire.*;
 import com.example.system.service.ISysQuestionnaireService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.Errors;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.html.Option;
 import javax.validation.Valid;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -68,7 +62,8 @@ public class QuestionnaireController {
     httpMethod = "POST"
   )
   @PostMapping("create")
-  public ResultJSON<String> createQuestionnaire(String questionnaireName) {
+  public ResultJSON<String> createQuestionnaire(@RequestBody CreateQuestionnaireDto createQuestionnaireDto) {
+    final String questionnaireName = createQuestionnaireDto.getQuestionnaireName();
     questionnaireService.createQuestionnaireByName(questionnaireName);
     return ResultJSON.<String>success().addData("");
   }
@@ -84,7 +79,7 @@ public class QuestionnaireController {
   public ResultJSON<String> answerQuestionnaire(
     @RequestBody @Valid QuestionAnswerDto questionAnswerDto, BindingResult errors
   ) throws QuestionnaireNotFoundException, SubjectNotFoundException, OptionNotFoundException,
-    QuestionnaireBrokenFormatException {
+    QuestionnaireBrokenFormatException, AlreadySubmittedException {
 
     if(errors.hasErrors()) {
       throw new QuestionnaireBrokenFormatException();
@@ -95,7 +90,7 @@ public class QuestionnaireController {
     String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
     if(questionnaireService.isSubmitted(questionnaireId, username)) {
-      throw new QuestionnaireBrokenFormatException();
+      throw new AlreadySubmittedException();
     }
 
     QuestionnaireDetailDto detailDto =
@@ -180,6 +175,16 @@ public class QuestionnaireController {
     return ResultJSON.<String>success().addData("");
   }
 
+
+  @ApiOperation(
+    value = "获取回答的问卷",
+    httpMethod = "GET"
+  )
+  @GetMapping("answer/{questionnaireId}")
+  public ResultJSON<String> getAnswers(@PathVariable("questionnaireId") String questionnaireId) {
+    return ResultJSON.<String>success();
+  }
+
   @ApiOperation(
     value = "获取题目池",
     httpMethod = "GET"
@@ -188,6 +193,32 @@ public class QuestionnaireController {
   public ResultJSON<List<SubjectDto>> getSubjectPool() {
     List<SubjectDto> subjectDtoList = questionnaireService.getSubjectList();
     return ResultJSON.<List<SubjectDto>>success().addData(subjectDtoList);
+  }
+
+
+  @ApiOperation(
+    value = "关联题库",
+    httpMethod = "POST"
+  )
+  @PostMapping("/association")
+  public ResultJSON<String> association(@Valid @RequestBody QuestionnaireAssociationDto dto) {
+    questionnaireService.associateQuestionnaireWithSubject(dto);
+    return ResultJSON.success();
+  }
+
+  @ApiOperation(
+    value = "新增题目",
+    httpMethod = "POST"
+  )
+  @PostMapping("subject")
+  public ResultJSON<String> createSubject(@Valid @RequestBody AddSubjectDto dto)
+  throws ApiException {
+    if(dto.getOptions().size() <= 0) {
+      throw new ApiException(RESPONSE_STATUS.QUESTIONNAIRE_EMPTY_OPTIONS);
+    }
+
+    questionnaireService.createSubjectWithOptions(dto);
+    return ResultJSON.success();
   }
 
   @ExceptionHandler(QuestionnaireNotFoundException.class)
@@ -208,5 +239,15 @@ public class QuestionnaireController {
   @ExceptionHandler(OptionNotFoundException.class)
   public ResultJSON<String> handleOptionNotFoundException() {
     return ResultJSON.fail(RESPONSE_STATUS.QUESTIONNAIRE_EMPTY_OPTION);
+  }
+
+  @ExceptionHandler(AlreadySubmittedException.class)
+  public ResultJSON<String> handleAlreadySubmittedException() {
+    return ResultJSON.fail(RESPONSE_STATUS.QUESTIONNAIRE_ALREADY_SUBMITTED);
+  }
+
+  @ExceptionHandler(ApiException.class)
+  public ResultJSON<String> handleApiException(ApiException e) {
+    return ResultJSON.fail(e.getStatus());
   }
 }

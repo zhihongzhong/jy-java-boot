@@ -3,6 +3,7 @@ package com.example.system.mapper;
 import com.example.system.entity.SysSubject;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
+
 import java.util.List;
 
 @Mapper

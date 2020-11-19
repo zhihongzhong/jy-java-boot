@@ -33,6 +33,18 @@ public class RandomImageUtil {
   /* 图片格式 */
   private static final String EXTENSION = "png";
 
+  /* 字号 */
+  private static final int FONT_SIZE = 62;
+
+  /* 字符的向下偏移量 */
+  private static final int Y_AXIS_OFFSET = (HEIGHT - FONT_SIZE) + FONT_SIZE / 2;
+
+  /* 单个字符的间隔空间 */
+  private static final int BLOCK_SIZE = WIDTH / 4;
+
+  /* 字符的向左偏移 */
+  private static final int X_AXIS_OFFSET = BLOCK_SIZE / 2 - 12;
+
   private static  BufferedImage bufferedImage(String randomCode) {
 
     final BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_BGR);
@@ -63,8 +75,8 @@ public class RandomImageUtil {
     graphics2D.setColor(Color.BLACK);
 
     for( int i = 0; i < randomCode.length(); i++ ) {
-      graphics2D.setFont(new Font("Times New Roman", Font.BOLD, 24));
-      graphics2D.drawString(String.valueOf(randomCode.charAt(i)), (23 * i) + 8, 26);
+      graphics2D.setFont(new Font("Times New Roman", Font.BOLD, FONT_SIZE));
+      graphics2D.drawString(String.valueOf(randomCode.charAt(i)), (BLOCK_SIZE * i) + X_AXIS_OFFSET, Y_AXIS_OFFSET);
     }
 
     graphics2D.dispose();

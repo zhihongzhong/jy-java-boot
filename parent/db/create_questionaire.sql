@@ -29,7 +29,9 @@ CREATE TABLE `sys_subject` (
      PRIMARY KEY(`id`)
 ) ENGINE=InnoDB CHARSET=utf8mb4 COMMENT "主题";
 
-INSERT INTO `sys_subject` VALUES("36efdcb4a7643f2eaf737e3cd3afdd6b", "问题1", 1, 1, 2, 2, NULL, 1, 1, now(), now());
+INSERT INTO `sys_subject` VALUES("36efdcb4a7643f2eaf737e3cd3afdd6b", "这是一道单选题", 1, 1, 2, 2, NULL, 1, 1, now(), now());
+INSERT INTO `sys_subject` VALUES("c7f9ac6423ee11eb958d525400fd7bf7", "这是一道单选题", 1, 1, 2, 2, NULL, 1, 1, now(), now());
+INSERT INTO `sys_subject` VALUES("f8d639c99794a849e4720776c0812c70", "这是一道多选题", 2, 1, 2, 2, NULL, 1, 1, now(), now());
 
 DROP TABLE IF EXISTS `sys_subject_option`;
 CREATE TABLE `sys_subject_option` (
@@ -47,6 +49,16 @@ INSERT INTO `sys_subject_option` VALUES("b01b8005230511eb958d525400fd7bf7", "36e
 INSERT INTO `sys_subject_option` VALUES("02b4625bb809ac15be560a67ea6eb24b", "36efdcb4a7643f2eaf737e3cd3afdd6b", "选项3", now(), now()); 
 INSERT INTO `sys_subject_option` VALUES("3603d53f16734a904c93af3d798a8495", "36efdcb4a7643f2eaf737e3cd3afdd6b", "选项4", now(), now()); 
 
+INSERT INTO `sys_subject_option` VALUES("d9285faac6ea98f9127b6e3068c5fb88", "c7f9ac6423ee11eb958d525400fd7bf7", "选项1", now(), now()); 
+INSERT INTO `sys_subject_option` VALUES("14c2345a1f2360fca9097c7780cf4e9c", "c7f9ac6423ee11eb958d525400fd7bf7", "选项2", now(), now()); 
+INSERT INTO `sys_subject_option` VALUES("9a204c3afa857d9ae582cfab608ea53a", "c7f9ac6423ee11eb958d525400fd7bf7", "选项3", now(), now()); 
+INSERT INTO `sys_subject_option` VALUES("a7e74f02dcfdbb5d7f1b2bc406fc3a54", "c7f9ac6423ee11eb958d525400fd7bf7", "选项4", now(), now()); 
+
+INSERT INTO `sys_subject_option` VALUES("7ff68fa03dbdca8a86ae5d389a720f41", "f8d639c99794a849e4720776c0812c70", "选项1", now(), now()); 
+INSERT INTO `sys_subject_option` VALUES("dee5cdd51876850639854cefec3b81aa", "f8d639c99794a849e4720776c0812c70", "选项2", now(), now()); 
+INSERT INTO `sys_subject_option` VALUES("0f84713147919a9a16c00ada099e1593", "f8d639c99794a849e4720776c0812c70", "选项3", now(), now()); 
+INSERT INTO `sys_subject_option` VALUES("233f9fbbd70264ddd3f3b513739b5caa", "f8d639c99794a849e4720776c0812c70", "选项4", now(), now()); 
+
 DROP TABLE IF EXISTS `sys_questionnaire_subject`; 
 CREATE TABLE `sys_questionnaire_subject` (
 	`id` VARCHAR(32) NOT NULL COMMENT "主键",
@@ -58,11 +70,14 @@ CREATE TABLE `sys_questionnaire_subject` (
 )ENGINE=InnoDB CHARSET=utf8mb4 COMMENT "问卷和题目关联表";
 
 INSERT INTO `sys_questionnaire_subject` values("17627ace233911eb958d525400fd7bf7", "13b0715912a5951965feb3b19bd4b94c", "36efdcb4a7643f2eaf737e3cd3afdd6b");
+INSERT INTO `sys_questionnaire_subject` values("b70f7b2ee1db626864c5e29b57d18070", "13b0715912a5951965feb3b19bd4b94c", "c7f9ac6423ee11eb958d525400fd7bf7");
+INSERT INTO `sys_questionnaire_subject` values("8b4485d26bec52bc70c4b4ab50a1f451", "13b0715912a5951965feb3b19bd4b94c", "f8d639c99794a849e4720776c0812c70");
 
 DROP TABLE IF EXISTS `sys_questionnaire_answer`;
 
 CREATE TABLE `sys_questionnaire_answer`(
 	`id` VARCHAR(32) NOT NULL COMMENT "主键",
+    `questionaire_id` VARCHAR(32) NOT NULL COMMENT "问卷ID",
     `questionnaire_subject_id` VARCHAR(32) NOT NULL COMMENT "问卷，问题关联表ID",
     `user_id` VARCHAR(32)  NULL COMMENT "受访人ID",
     `answer` VARCHAR(32) DEFAULT NULL COMMENT "答案",

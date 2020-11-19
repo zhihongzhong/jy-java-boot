@@ -57,11 +57,11 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.String">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into sys_subject (sub_name, sub_type, sub_status, 
+    insert into sys_subject (id, sub_name, sub_type, sub_status,
       is_nullable, is_leap, leap_ques, 
       min, max, created_at, 
       update_at)
-    values (#{subName,jdbcType=VARCHAR}, #{subType,jdbcType=INTEGER}, #{subStatus,jdbcType=TINYINT}, 
+    values (#{id, jdbcType=VARCHAR},#{subName,jdbcType=VARCHAR}, #{subType,jdbcType=INTEGER}, #{subStatus,jdbcType=TINYINT},
       #{isNullable,jdbcType=TINYINT}, #{isLeap,jdbcType=TINYINT}, #{leapQues,jdbcType=VARCHAR}, 
       #{min,jdbcType=INTEGER}, #{max,jdbcType=INTEGER}, #{createdAt,jdbcType=TIMESTAMP}, 
       #{updateAt,jdbcType=TIMESTAMP})
@@ -225,6 +225,6 @@
     -->
     select
     <include refid="Base_Column_List" />
-    from sys_subject where status = 1
+    from sys_subject where sub_status = 1
   </select>
 </mapper>

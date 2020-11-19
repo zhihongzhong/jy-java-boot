@@ -42,6 +42,12 @@ public enum RESPONSE_STATUS {
 
   /* 选项为空 */
   QUESTIONNAIRE_EMPTY_OPTION(703, "选项为空"),
+
+  /* 已提交 */
+  QUESTIONNAIRE_ALREADY_SUBMITTED(704, "用户已提交过问卷"),
+
+  /* 选项不能为空 */
+  QUESTIONNAIRE_EMPTY_OPTIONS(705, "选项不能为空"),
   /* 请求正常返回 */
   SUCCESS(0, "操作成功");
 

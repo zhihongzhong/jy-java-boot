@@ -1,7 +1,6 @@
 package com.example.system.service.impl;
 
 
-import com.example.common.utils.MD5Util;
 import com.example.constant.USER_AND_ROLE;
 import com.example.system.entity.SysRole;
 import com.example.system.entity.SysUser;

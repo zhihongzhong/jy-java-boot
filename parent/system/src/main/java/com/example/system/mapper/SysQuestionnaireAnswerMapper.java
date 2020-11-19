@@ -4,6 +4,7 @@ import com.example.system.entity.SysQuestionnaireAnswer;
 import com.example.system.entity.param.QuestionnaireAnswerParam;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
+
 import java.util.List;
 
 @Mapper
@@ -33,5 +34,5 @@ public interface SysQuestionnaireAnswerMapper {
     /**
      * 查询用户是否已经提交数据
      * */
-    SysQuestionnaireAnswer selectByQuestionnaireIdAndUserName(QuestionnaireAnswerParam param);
+    List<SysQuestionnaireAnswer> selectByQuestionnaireIdAndUserName(QuestionnaireAnswerParam param);
 }

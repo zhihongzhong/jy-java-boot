@@ -63,6 +63,11 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
       throw new UsernameNotFoundException("token 未找到");
     }
     String username = jwtProvider.getSubject(token);
+
+    if(username == null) {
+      log.info("用户名解析失败， 将抛出异常");
+      throw new UsernameNotFoundException("用户名解析失败");
+    }
     String password = (String) jwtProvider.getClaim(token, property.getPasswordField());
 
     log.info("拿到用户名： [{}], 密码： [{}]", username, password);

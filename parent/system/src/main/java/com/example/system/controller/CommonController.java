@@ -3,17 +3,18 @@ package com.example.system.controller;
 
 import com.example.common.constant.RESPONSE_STATUS;
 import com.example.common.utils.ResultJSON;
-import com.example.constant.IMAGE_EXTENSIONS;
 import com.example.config.file.IStorageService;
 import com.example.config.file.dto.FileInformationDto;
 import com.example.config.file.exception.FileTypeNotSupportException;
+import com.example.constant.IMAGE_EXTENSIONS;
 import com.example.system.dto.FileDescriptionModel;
 import io.swagger.annotations.Api;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
+
 import java.io.IOException;
+import java.util.List;
 
 @Log4j2
 @RestController

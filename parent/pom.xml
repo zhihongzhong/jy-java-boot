@@ -136,7 +136,22 @@
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
 			
+			<!-- https://mvnrepository.com/artifact/com.alibaba/druid -->
+			<dependency>
+				<groupId>com.alibaba</groupId>
+				<artifactId>druid</artifactId>
+				<version>1.2.3</version>
+			</dependency>
+			
+			<!-- map do to vo -->
+			<dependency>
+				<groupId>net.sf.dozer</groupId>
+				<artifactId>dozer</artifactId>
+				<version>5.4.0</version>
+			</dependency>
+			
 		</dependencies>
+		
 	</dependencyManagement>
 	
 	

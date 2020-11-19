@@ -1,5 +1,7 @@
 package com.example.system.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Date;
 
 public class SysUser {
@@ -10,6 +12,7 @@ public class SysUser {
      *
      * @mbg.generated Mon Nov 09 17:13:50 CST 2020
      */
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String id;
 
     /**
@@ -37,6 +40,7 @@ public class SysUser {
      *
      * @mbg.generated Mon Nov 09 17:13:50 CST 2020
      */
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     /**
@@ -73,6 +77,7 @@ public class SysUser {
      *
      * @mbg.generated Mon Nov 09 17:13:50 CST 2020
      */
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Date created_at;
 
     /**
@@ -82,6 +87,7 @@ public class SysUser {
      *
      * @mbg.generated Mon Nov 09 17:13:50 CST 2020
      */
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Date update_at;
 
     /**

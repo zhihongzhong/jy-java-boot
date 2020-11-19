@@ -2,9 +2,7 @@ package com.example.system.service.impl;
 
 import com.example.common.utils.UUIDUtil;
 import com.example.constant.QUESTIONNAIRE_AND_SUBJECT;
-import com.example.system.dto.questionnaire.QuestionAnswerDto;
-import com.example.system.dto.questionnaire.QuestionnaireDetailDto;
-import com.example.system.dto.questionnaire.SubjectDto;
+import com.example.system.dto.questionnaire.*;
 import com.example.system.entity.*;
 import com.example.system.entity.param.QuestionnaireAnswerParam;
 import com.example.system.entity.param.QuestionnaireParam;
@@ -65,9 +63,9 @@ public class SysQuestionnaireServiceImpl implements ISysQuestionnaireService {
    * 关联问卷和题目
    * */
   @Override
-  public void associateQuestionnaireWithSubject(SysQuestionnaire questionnaire, SysSubject subject) {
-    String questionnaireId = questionnaire.getId();
-    String subjectId = subject.getId();
+  public void associateQuestionnaireWithSubject(QuestionnaireAssociationDto dto) {
+    String questionnaireId = dto.getQuestionnaireId();
+    String subjectId = dto.getSubjectId();
 
     SysQuestionnaireSubject questionnaireSubject = new SysQuestionnaireSubject();
     questionnaireSubject.setId(UUIDUtil.uuid());
@@ -97,9 +95,35 @@ public class SysQuestionnaireServiceImpl implements ISysQuestionnaireService {
 
   @Override
   @Transactional
-  public void createSubjectWithOptions(SysQuestionnaireSubject subject, List<SysQuestionnaire> options) {
-    String subjectId = subject.getSubjectId();
+  public void createSubjectWithOptions(AddSubjectDto dto) {
 
+    final Date now = new Date();
+
+    SysSubject subject = new SysSubject();
+    subject.setId(UUIDUtil.uuid());
+    subject.setSubName(dto.getSubName());
+    subject.setSubType(dto.getSubType());
+    subject.setIsNullable(dto.getIsNullable());
+    subject.setIsLeap(dto.getIsLeap());
+    subject.setSubStatus(QUESTIONNAIRE_AND_SUBJECT.ACTIVE_STATUS);
+    subject.setMin(dto.getMin());
+    subject.setMax(dto.getMax());
+    subject.setCreatedAt(now);
+    subject.setLeapQues(null);
+
+    List<SysSubjectOption> options = new ArrayList<>();
+
+    for(String opt : dto.getOptions()) {
+      SysSubjectOption option = new SysSubjectOption();
+      option.setId(UUIDUtil.uuid());
+      option.setOptionName(opt);
+      option.setSubjectId(subject.getId());
+      option.setCreatedAt(now);
+      options.add(option);
+    }
+
+    subjectMapper.insert(subject);
+    optionMapper.insertAll(options);
   }
 
   @Override
@@ -173,15 +197,16 @@ public class SysQuestionnaireServiceImpl implements ISysQuestionnaireService {
     List<QuestionAnswerDto.Answer> answers = answerDto.getAnswers();
     List<SysQuestionnaireAnswer> questionnaireAnswers = new ArrayList<>();
     for (QuestionAnswerDto.Answer answer : answers) {
-      SysQuestionnaireAnswer questionnaireAnswer = new SysQuestionnaireAnswer();
-      questionnaireAnswer.setId(UUIDUtil.uuid());
-
-      questionnaireAnswer.setQuestionnaireSubjectId(hashMap.get(answer.getSubjectId()));
-      questionnaireAnswer.setUserId(userName);
-      questionnaireAnswer.setQuestionaireId(questionnaireId);
-      questionnaireAnswer.setAnswer(String.join(",", answer.getOptionId()));
-      questionnaireAnswer.setCreatedAt(new Date());
-      questionnaireAnswers.add(questionnaireAnswer);
+      for (String opt : answer.getOptionId()) {
+        SysQuestionnaireAnswer questionnaireAnswer = new SysQuestionnaireAnswer();
+        questionnaireAnswer.setId(UUIDUtil.uuid());
+        questionnaireAnswer.setQuestionnaireSubjectId(hashMap.get(answer.getSubjectId()));
+        questionnaireAnswer.setUserId(userName);
+        questionnaireAnswer.setQuestionaireId(questionnaireId);
+        questionnaireAnswer.setAnswer(opt);
+        questionnaireAnswer.setCreatedAt(new Date());
+        questionnaireAnswers.add(questionnaireAnswer);
+      }
     }
 
     questionnaireAnswerMapper.insertAll(questionnaireAnswers);
