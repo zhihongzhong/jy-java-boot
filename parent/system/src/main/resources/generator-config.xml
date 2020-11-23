@@ -155,5 +155,41 @@
       <property name="useActualColumnNames" value="false"/>
       <generatedKey column="ID" sqlStatement="MySql" identity="true" />
     </table>
+  
+    <table tableName="sys_result"
+           domainObjectName="SysResult"
+           enableDeleteByExample="false"
+           enableCountByExample="false"
+           enableUpdateByExample="false"
+           enableSelectByExample="false"
+           selectByExampleQueryId="false"
+    >
+      <property name="useActualColumnNames" value="false"/>
+      <generatedKey column="ID" sqlStatement="MySql" identity="true" />
+    </table>
+  
+    <table tableName="sys_res_option"
+           domainObjectName="SysResOption"
+           enableDeleteByExample="false"
+           enableCountByExample="false"
+           enableUpdateByExample="false"
+           enableSelectByExample="false"
+           selectByExampleQueryId="false"
+    >
+      <property name="useActualColumnNames" value="false"/>
+      <generatedKey column="ID" sqlStatement="MySql" identity="true" />
+    </table>
+  
+    <table tableName="sys_res_option_result"
+           domainObjectName="sysResOptionResult"
+           enableDeleteByExample="false"
+           enableCountByExample="false"
+           enableUpdateByExample="false"
+           enableSelectByExample="false"
+           selectByExampleQueryId="false"
+    >
+      <property name="useActualColumnNames" value="false"/>
+      <generatedKey column="ID" sqlStatement="MySql" identity="true" />
+    </table>
   </context>
 </generatorConfiguration>
