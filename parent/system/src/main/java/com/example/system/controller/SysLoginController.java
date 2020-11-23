@@ -10,6 +10,7 @@ import com.example.common.utils.ResultJSON;
 import com.example.constant.USER_AND_ROLE;
 import com.example.system.dto.SysUserModel;
 import com.example.system.dto.SysUserRegisterModel;
+import com.example.system.dto.SysUserWithoutCaptchaModel;
 import com.example.system.entity.SysUser;
 import com.example.system.exception.*;
 import com.example.system.service.ISysUserService;
@@ -21,6 +22,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -134,7 +136,31 @@ public class SysLoginController {
     return ResultJSON.<SysUserProfileVo>success().addData(userProfileVo);
   }
 
+  @PostMapping("login/no_captcha")
+  @ApiOperation(
+    value = "无验证码登录"
+  )
+  public ResultJSON<SysUserProfileVo> loginWithoutCaptcha(@Valid @RequestBody SysUserWithoutCaptchaModel model)
+    throws IncorrectPasswordException, UsernameNotFoundException {
+    final String username = model.getUsername();
+    final String password = model.getPassword();
 
+    SysUser user = userService.selectSysByUsername(username);
+
+    if(user == null) {
+      throw new UsernameNotFoundException("用户名未找到");
+    }
+
+    if(!user.getPassword().equals(password)) {
+      throw new IncorrectPasswordException();
+    }
+
+    log.info("即将生产用户[{}]的token", username);
+    String token = jwtProvider.genToken(username);
+    SysUserProfileVo userProfileVo = new SysUserProfileVo(user, token);
+    log.info("获取 token: [{}]", token);
+    return ResultJSON.<SysUserProfileVo>success().addData(userProfileVo);
+  }
   /**
    * 用户注册模块
    * */

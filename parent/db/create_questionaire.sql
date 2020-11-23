@@ -64,14 +64,15 @@ CREATE TABLE `sys_questionnaire_subject` (
 	`id` VARCHAR(32) NOT NULL COMMENT "主键",
     `questionnaire_id` VARCHAR(32) NOT NULL COMMENT "问卷ID",
     `subject_id` VARCHAR(32) NOT NULL COMMENT "主题ID",
+    `is_root` INT NOT NULL COMMENT "是否为root", 
+    `option_id` VARCHAR(32) NOT NULL COMMENT "选项ID",
+    `to_subject_id` VARCHAR(32) NOT NULL COMMENT "跳题ID",
      PRIMARY KEY(`id`),
 	INDEX(`subject_id`) USING BTREE,
-	INDEX(`questionnaire_id`) USING BTREE
+	INDEX(`questionnaire_id`) USING BTREE,
+    UNIQUE INDEX(`option_id`) USING BTREE
 )ENGINE=InnoDB CHARSET=utf8mb4 COMMENT "问卷和题目关联表";
 
-INSERT INTO `sys_questionnaire_subject` values("17627ace233911eb958d525400fd7bf7", "13b0715912a5951965feb3b19bd4b94c", "36efdcb4a7643f2eaf737e3cd3afdd6b");
-INSERT INTO `sys_questionnaire_subject` values("b70f7b2ee1db626864c5e29b57d18070", "13b0715912a5951965feb3b19bd4b94c", "c7f9ac6423ee11eb958d525400fd7bf7");
-INSERT INTO `sys_questionnaire_subject` values("8b4485d26bec52bc70c4b4ab50a1f451", "13b0715912a5951965feb3b19bd4b94c", "f8d639c99794a849e4720776c0812c70");
 
 DROP TABLE IF EXISTS `sys_questionnaire_answer`;
 
