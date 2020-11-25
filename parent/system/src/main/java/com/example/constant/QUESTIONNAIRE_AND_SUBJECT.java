@@ -15,5 +15,8 @@ public class QUESTIONNAIRE_AND_SUBJECT {
   public final static int QUESTION_CHECKOUT = 2;
   public final static int QUESTION_RATE = 3;
 
+  public final static int IS_LEAF = 1;
+  public final static int IS_ROOT = 1;
+
   private final static String DEFAULT_VALUE = "";
 }

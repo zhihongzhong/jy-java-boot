@@ -65,6 +65,7 @@ CREATE TABLE `sys_questionnaire_subject` (
     `questionnaire_id` VARCHAR(32) NOT NULL COMMENT "问卷ID",
     `subject_id` VARCHAR(32) NOT NULL COMMENT "主题ID",
     `is_root` INT NOT NULL COMMENT "是否为root", 
+    `is_leaf` INT NOT NULL COMMENT "是否为叶节点",
     `option_id` VARCHAR(32) NOT NULL COMMENT "选项ID",
     `to_subject_id` VARCHAR(32) NOT NULL COMMENT "跳题ID",
      PRIMARY KEY(`id`),

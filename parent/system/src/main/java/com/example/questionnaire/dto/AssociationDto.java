@@ -5,8 +5,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.Valid;
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -28,14 +26,21 @@ public class AssociationDto {
 
   @Data
   public static class QuestionDto {
+
     @NotNull
     private String questionId;
+
     @NotNull
     private String optionId;
+
     @NotNull
     private String toQuestionId = "";
+
     @NotNull
     private Integer isRoot;
+
+    @NotNull
+    private Integer toQuestionisLeaf;
   }
 
 }

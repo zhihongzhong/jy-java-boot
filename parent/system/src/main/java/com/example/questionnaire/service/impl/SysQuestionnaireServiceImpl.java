@@ -1,5 +1,6 @@
 package com.example.questionnaire.service.impl;
 
+import cn.hutool.core.date.DateTime;
 import com.example.common.utils.UUIDUtil;
 import com.example.constant.QUESTIONNAIRE_AND_SUBJECT;
 import com.example.questionnaire.dto.*;
@@ -30,6 +31,8 @@ public class SysQuestionnaireServiceImpl implements ISysQuestionnaireService {
   private final SysSubjectOptionMapper optionMapper;
   private final SysQuestionnaireSubjectMapper questionnaireSubjectMapper;
   private final SysQuestionnaireAnswerMapper questionnaireAnswerMapper;
+  private final SysResultMapper resultMapper;
+  private final SysResOptionMapper resOptionMapper;
 
   public SysQuestionnaireServiceImpl(
     SysQuestionnaireAnswerMapper answerMapper,
@@ -37,7 +40,10 @@ public class SysQuestionnaireServiceImpl implements ISysQuestionnaireService {
     SysQuestionnaireMapper questionnaireMapper,
     SysSubjectOptionMapper optionMapper,
     SysQuestionnaireSubjectMapper questionnaireSubjectMapper,
-    SysQuestionnaireAnswerMapper questionnaireAnswerMapper) {
+    SysQuestionnaireAnswerMapper questionnaireAnswerMapper,
+    SysResultMapper resultMapper,
+    SysResOptionMapper resOptionMapper
+    ) {
 
     this.answerMapper = answerMapper;
     this.subjectMapper = subjectMapper;
@@ -45,6 +51,8 @@ public class SysQuestionnaireServiceImpl implements ISysQuestionnaireService {
     this.optionMapper = optionMapper;
     this.questionnaireSubjectMapper = questionnaireSubjectMapper;
     this.questionnaireAnswerMapper = questionnaireAnswerMapper;
+    this.resultMapper = resultMapper;
+    this.resOptionMapper = resOptionMapper;
   }
 
   /**
@@ -77,6 +85,7 @@ public class SysQuestionnaireServiceImpl implements ISysQuestionnaireService {
     List<SysQuestionnaireSubject> questionnaireSubjects = new ArrayList<>();
 
     for (AssociationDto.QuestionDto questionDto : dto.getQuestionDtoList()) {
+
       SysQuestionnaireSubject questionnaireSubject = new SysQuestionnaireSubject();
       questionnaireSubject.setId(UUIDUtil.uuid());
       questionnaireSubject.setQuestionnaireId(dto.getQuestionnaireId());
@@ -84,6 +93,8 @@ public class SysQuestionnaireServiceImpl implements ISysQuestionnaireService {
       questionnaireSubject.setToSubjectId(questionDto.getToQuestionId());
       questionnaireSubject.setOptionId(questionDto.getOptionId());
       questionnaireSubject.setIsRoot(questionDto.getIsRoot());
+      questionnaireSubject.setIsLeaf(questionDto.getToQuestionisLeaf());
+
       questionnaireSubjects.add(questionnaireSubject);
     }
     questionnaireSubjectMapper.insertAll(questionnaireSubjects);
@@ -139,6 +150,23 @@ public class SysQuestionnaireServiceImpl implements ISysQuestionnaireService {
   }
 
   @Override
+  public void createResultByName(String name) {
+    SysResult result = new SysResult();
+    result.setId(UUIDUtil.uuid());
+    result.setResultName(name);
+    result.setStatus(QUESTIONNAIRE_AND_SUBJECT.ACTIVE_STATUS);
+    result.setCreatedAt(DateTime.now());
+    result.setUpdateAt(DateTime.now());
+    resultMapper.insert(result);
+  }
+
+  @Override
+  public void createResultByResultDto(CreateResultDto resultDto) {
+
+  }
+
+
+  @Override
   public List<SubjectDto> getSubjectList() {
 
     List<SubjectDto> subjectDtoList = new ArrayList<>();
@@ -154,6 +182,35 @@ public class SysQuestionnaireServiceImpl implements ISysQuestionnaireService {
     }
 
     return subjectDtoList;
+  }
+
+  @Override
+  public List<ResultDto> getResultList() {
+    List<SysResult> results = resultMapper.selectAll();
+    List<ResultDto> resultDtos = new ArrayList<>();
+    for(SysResult result: results) {
+      ResultDto resultDto = new ResultDto();
+      resultDto.setId(result.getId());
+      resultDto.setResultName(result.getResultName());
+      resultDtos.add(resultDto);
+    }
+    return resultDtos;
+  }
+
+  @Override
+  public List<ResOptionDto> getResultOptionList() {
+    List<SysResOption> sysResOptions = resOptionMapper.selectAll();
+
+    List<ResOptionDto> resOptionDtoList = new ArrayList<>();
+
+    for(SysResOption option : sysResOptions) {
+      ResOptionDto optionDto = new ResOptionDto();
+      optionDto.setId(option.getId());
+      optionDto.setOptionName(option.getResOptionName());
+      resOptionDtoList.add(optionDto);
+    }
+
+    return resOptionDtoList;
   }
 
   @Override
@@ -235,6 +292,18 @@ public class SysQuestionnaireServiceImpl implements ISysQuestionnaireService {
 
     SysQuestionnaireSubject questionnaireSubject = questionnaireSubjectMapper.selectOneByAnswerModel(answerModel);
     log.info(questionnaireSubject);
+
+    // 说明下一道题目是叶节点
+    if(questionnaireSubject.getIsLeaf() == QUESTIONNAIRE_AND_SUBJECT.IS_LEAF) {
+      SysResult result =  resultMapper.selectByPrimaryKey(questionnaireSubject.getToSubjectId());
+      AnswerDto answerDto = new AnswerDto();
+      answerDto.setSubjectId(result.getId());
+      answerDto.setSubjectName(result.getResultName());
+      answerDto.setHasNext(Boolean.FALSE);
+      answerDto.setOptions(new ArrayList<>());
+      return answerDto;
+    }
+
     return getAnswerDtoBySubjectId(questionnaireSubject.getToSubjectId());
   }
 
@@ -260,6 +329,7 @@ public class SysQuestionnaireServiceImpl implements ISysQuestionnaireService {
     AnswerDto beforeAnswerDto = new AnswerDto();
     beforeAnswerDto.setSubjectId(subject.getId());
     beforeAnswerDto.setOptions(options);
+    beforeAnswerDto.setHasNext(Boolean.TRUE);
     beforeAnswerDto.setSubjectName(subject.getSubName());
     return beforeAnswerDto;
   }

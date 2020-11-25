@@ -25,6 +25,11 @@ public class AnswerDto {
   )
   private List<Option> options;
 
+  @ApiModelProperty(
+    value = "是否还有下一个"
+  )
+  private Boolean hasNext;
+
   @Data
   public static class Option {
     private String optionId;

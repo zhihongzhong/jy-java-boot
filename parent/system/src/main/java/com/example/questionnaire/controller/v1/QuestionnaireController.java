@@ -2,23 +2,17 @@ package com.example.questionnaire.controller.v1;
 
 import com.example.common.constant.RESPONSE_STATUS;
 import com.example.common.utils.ResultJSON;
-import com.example.constant.QUESTIONNAIRE_AND_SUBJECT;
 import com.example.questionnaire.dto.*;
 import com.example.questionnaire.entity.SysQuestionnaire;
-import com.example.questionnaire.entity.SysSubjectOption;
 import com.example.questionnaire.exception.*;
-import com.example.system.exception.ApiException;
 import com.example.questionnaire.service.ISysQuestionnaireService;
+import com.example.system.exception.ApiException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/sys/admin/questionnaire")
@@ -68,113 +62,36 @@ public class QuestionnaireController {
     return ResultJSON.<String>success().addData("");
   }
 
-  /**
-   * 回答问卷
-   * */
-//  @ApiOperation(
-//    value = "提交问卷",
-//    httpMethod = "POST"
-//  )
-//  @PostMapping("answer")
-//  public ResultJSON<String> answerQuestionnaire(
-//    @RequestBody @Valid QuestionAnswerDto questionAnswerDto, BindingResult errors
-//  ) throws QuestionnaireNotFoundException, SubjectNotFoundException, OptionNotFoundException,
-//    QuestionnaireBrokenFormatException, AlreadySubmittedException {
-//
-//    if(errors.hasErrors()) {
-//      throw new QuestionnaireBrokenFormatException();
-//    }
-//
-//
-//    String questionnaireId = questionAnswerDto.getQuestionnaireId();
-//    String username = SecurityContextHolder.getContext().getAuthentication().getName();
-//
-//    if(questionnaireService.isSubmitted(questionnaireId, username)) {
-//      throw new AlreadySubmittedException();
-//    }
-//
-//    QuestionnaireDetailDto detailDto =
-//      questionnaireService.getQuestionnaireByID(questionnaireId);
-//
-//    /* 问卷未找到， 抛出异常 */
-//    if(detailDto == null) {
-//      throw new QuestionnaireNotFoundException();
-//    }
-//
-//    /* 进入数据验证模块 */
-//    Map<String, List<String>> hashMap = questionAnswerDto
-//      .getAnswers()
-//      .stream()
-//      .collect(Collectors.toMap(QuestionAnswerDto.Answer::getSubjectId, QuestionAnswerDto.Answer::getOptionId));
-//
-//    @SuppressWarnings(value = "all")
-//    Map<String, String> extraValueMap = questionAnswerDto
-//      .getAnswers()
-//      .stream()
-//      .collect(Collectors.toMap(QuestionAnswerDto.Answer::getSubjectId, QuestionAnswerDto.Answer::getValue));
-//
-//
-//    List<SubjectDto> subjectDtoList = detailDto.getSubjectDtoList();
-//
-//    /* 判断答题列表是否完整 */
-//    for (SubjectDto subjectDto : subjectDtoList) {
-//      if (
-//        !hashMap.containsKey(subjectDto.getSysSubject().getId()) &&
-//        !subjectDto.getSysSubject().getIsNullable().equals(QUESTIONNAIRE_AND_SUBJECT.NULLABLE) // 如果每查到当前题目且该题不可跳过
-//      ) {
-//        throw new SubjectNotFoundException(); // 抛出异常
-//      }
-//    }
-//
-//
-//    /* 判断选项是否在问题中 */
-//    for (SubjectDto subjectDto : subjectDtoList ) {
-//      List<String> subjectOptions = subjectDto.getOptions().stream().map(SysSubjectOption::getId).collect(Collectors.toList());
-//      List<String> options = hashMap.get(subjectDto.getSysSubject().getId());
-//      String value = extraValueMap.get(subjectDto.getSysSubject().getId());
-//
-//      if (options == null && !subjectDto.getSysSubject().getIsNullable().equals(QUESTIONNAIRE_AND_SUBJECT.NULLABLE)) { // 如果当前题目不可跳过且选项为空
-//        throw new OptionNotFoundException();
-//      }
-//
-//      if (options != null) {  // 如果 options 不为空
-//        for (String option : options) {
-//          if(!subjectOptions.contains(option)) {
-//            throw new OptionNotFoundException(); // 如果选项不在题目列表中
-//          }
-//        }
-//
-//        /* 针对不同类型的题目进行判断 */
-//        /* 目前主要校验单选题 */
-//        switch (subjectDto.getSysSubject().getSubType()) {
-//          case QUESTIONNAIRE_AND_SUBJECT.QUESTION_OPTION: // 单选题
-//            if(options.size() != 1) throw new OptionNotFoundException();
-//            break;
-//          case QUESTIONNAIRE_AND_SUBJECT.QUESTION_CHECKOUT: // 多选题
-//            if(options.size() < 1) throw new OptionNotFoundException();
-//            break;
-//          case QUESTIONNAIRE_AND_SUBJECT.QUESTION_RATE: // 打分题
-//            final Integer rate = Integer.getInteger(value);
-//            final Integer min = subjectDto.getSysSubject().getMin();
-//            final Integer max = subjectDto.getSysSubject().getMax();
-//
-//            if(rate < min || rate > max) {
-//              throw new OptionNotFoundException();
-//            }
-//            break;
-//          default:
-//            break;
-//        } // SWITCH
-//      } // IF
-//
-//    } // FOR
-//
-//    /* 结束数据验证模块 */
-//    /* 保存问答报文 */
-//    questionnaireService.save(questionAnswerDto, username);
-//    return ResultJSON.<String>success().addData("");
-//  }
 
+  @ApiOperation(
+    value = "新增结果",
+    httpMethod = "POST"
+  )
+  @PostMapping("result")
+  public ResultJSON<String> createResult(@Valid @RequestBody CreateResultDto resultDto) {
+    questionnaireService.createResultByName(resultDto.getResultName());
+    return ResultJSON.success();
+  }
+
+
+  @ApiOperation(
+    value = "获取结果列表",
+    httpMethod = "GET"
+  )
+  @GetMapping("result/list")
+  public ResultJSON<List<ResultDto>> listResult() {
+    return ResultJSON.<List<ResultDto>>success().addData(questionnaireService.getResultList());
+  }
+
+  @ApiOperation(
+    value = "获取结果对应操作列表",
+    httpMethod = "GET"
+  )
+  @GetMapping("result.option/list")
+  public ResultJSON<List<ResOptionDto>> listResultOpts() {
+    List<ResOptionDto> resOptionDtoList = questionnaireService.getResultOptionList();
+    return ResultJSON.<List<ResOptionDto>>success().addData(resOptionDtoList);
+  }
 
   @ApiOperation(
     value = "获取回答的问卷",
@@ -220,6 +137,7 @@ public class QuestionnaireController {
     questionnaireService.createSubjectWithOptions(dto);
     return ResultJSON.success();
   }
+
 
   @ApiOperation(
     value = "开始答题",
